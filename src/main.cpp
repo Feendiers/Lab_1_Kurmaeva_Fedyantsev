@@ -1,30 +1,67 @@
 #include <Arduino.h>
+#include <SoftwareSerial.h>
 
 #define LED_PIN 2   // Подключение диода 
 
 int i = 0;    // Инициализация переменной для итераций
 
+// Инициализация глобальной переменной для управления состоянием диода
+uint8_t state_diod = HIGH;    
+
+//Объявление структуры для вывода данных студентов
+#pragma pack(push, 1) 
+typedef struct _PACKET { 
+  uint32_t Group; 
+  char Name1[4]; 
+  char Name2[4]; 
+  uint32_t Data; 
+} PACKET, *PPACKET;
+#pragma pack(pop) 
+
+// Объявление глобальной переменной типа packet
+PACKET pac = {301, {'F', 'E', 'D', 'Y'}, {'K', 'U', 'R', 'M'}, 0};
+
+// Создание объекта класса SoftwareSerial
+SoftwareSerial Softserial(16, 17);
+
 void setup() {
   Serial.begin(115200);   // Настройка скорости чтения
-  Serial.println("Hello_word!");
+
+  // Сообщение об успешном подключении
+  Serial.println("Successful program port initialization!");
   delay(1000);    // Задержка
-  pinMode(LED_PIN, OUTPUT);   // Настраиваем пин как выход
+
+  // Настройка скорости чтения для SoftwareSerial
+  Softserial.begin(115200);
+  Softserial.println("Successful serial port initialization!");
+  delay(1000);
+
+  // Настройка пина для работы в режиме выхода
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, state_diod);   // Начальное значение для диода
+  delay(500);
 
 }
 
 void loop() {
-  // Вывод итераций
+  // Тест
+  /*
+  delay(1000);
   Serial.println(i);
-  i ++ ;
+  i ++;
+  */
+  
+  // Отправка данных на микроконтроллер
+  Softserial.write((uint8_t*)&pac, sizeof(pac));
+  // Инкримент для поля Data
+  pac.Data ++;
+  // Задержка для записи
+  delay(1000);
+
+  // Переключение состояния диода
+  state_diod = !state_diod;   // Изменение значения переменной на противоположное
+  digitalWrite(LED_PIN, state_diod);    // Изменение состояния диода
   delay(500);
 
-  digitalWrite(LED_PIN, HIGH);  // Включить светодиод
-  delay(250);                  // Ждать 0,25 секунду
-
-  digitalWrite(LED_PIN, LOW);   // Выключить
-  delay(250);                  // Ждать 0,25 секунду
-  /*
-  Происходит переключение питания на диоде с 3.3В на 0 из-за этого происходит мигание
-  */
 }
 
