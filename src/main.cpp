@@ -10,16 +10,16 @@ uint8_t state_diod = HIGH;
 
 //Объявление структуры для вывода данных студентов
 #pragma pack(push, 1) 
-typedef struct _PACKET { 
-  uint32_t Group; 
+typedef struct _PACKET {  
   char Name1[4]; 
-  char Name2[4]; 
+  char Name2[4];
+  uint32_t Group; 
   uint32_t Data; 
 } PACKET, *PPACKET;
 #pragma pack(pop) 
 
 // Объявление глобальной переменной типа packet
-PACKET pac = {301, {'F', 'E', 'D', 'Y'}, {'K', 'U', 'R', 'M'}, 0};
+PACKET pac = {{'F', 'E', 'D', 'Y'}, {'K', 'U', 'R', 'M'}, 301, 0};
 
 // Создание объекта класса SoftwareSerial
 SoftwareSerial Softserial(16, 17);
@@ -32,11 +32,11 @@ void setup() {
   delay(1000);    // Задержка
 
   // Настройка скорости чтения для SoftwareSerial
-  Softserial.begin(115200);
+  Softserial.begin(9600);
   Softserial.println("Successful serial port initialization!");
   delay(1000);
 
-  // Настройка пина для работы в режиме выхода
+  // Настройка пина для работы в режиме выходаты
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, state_diod);   // Начальное значение для диода
   delay(500);
