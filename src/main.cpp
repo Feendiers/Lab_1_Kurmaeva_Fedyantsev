@@ -50,18 +50,20 @@ void loop() {
   Serial.println(i);
   i ++;
   */
-  
-  // Отправка данных на микроконтроллер
+
+  delay(1000);
+  // Отправка данных на микроконтроллер в программный и аппаратный входы
   Softserial.write((uint8_t*)&pac, sizeof(pac));
+  Serial.println("Loop");
+  //delay(1000);
   // Инкримент для поля Data
   pac.Data ++;
   // Задержка для записи
-  delay(1000);
+  
 
   // Переключение состояния диода
   state_diod = !state_diod;   // Изменение значения переменной на противоположное
   digitalWrite(LED_PIN, state_diod);    // Изменение состояния диода
-  delay(500);
 
 }
 
